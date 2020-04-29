@@ -15,13 +15,13 @@ class Box
    * Usuário do contrato com o Correios
    * @var string
    */
-  private $contractCode;
+  private $contractCode = '';
 
   /**
    * Senha do contrato com o Correios
    * @var string
    */
-  private $contractPassword;
+  private $contractPassword = '';
 
   /**
    * CEP de Origem (apenas números)
@@ -139,7 +139,7 @@ class Box
    */
   public function setWeight($value)
   {
-    if (!filter_var($value, FILTER_VALIDATE_FLOAT)) {
+    if (filter_var($value, FILTER_VALIDATE_FLOAT) === false) {
       throw new \UnexpectedValueException("{$value} invalid");
     }
 
@@ -161,8 +161,8 @@ class Box
    */
   public function setLength($value)
   {
-    if (!filter_var($value, FILTER_VALIDATE_FLOAT)) {
-      throw new \UnexpectedValueException("{$value} invalid");
+    if (filter_var($value, FILTER_VALIDATE_FLOAT) === false) {
+      throw new \UnexpectedValueException("{$value} invalid.");
     }
 
     $this->length = floatval(number_format($value, 2, ".", ""));
@@ -183,7 +183,7 @@ class Box
    */
   public function setWidth($value)
   {
-    if (!filter_var($value, FILTER_VALIDATE_FLOAT)) {
+    if (filter_var($value, FILTER_VALIDATE_FLOAT) === false) {
       throw new \UnexpectedValueException("{$value} invalid");
     }
 
@@ -205,7 +205,7 @@ class Box
    */
   public function setHeight($value)
   {
-    if (!filter_var($value, FILTER_VALIDATE_FLOAT)) {
+    if (filter_var($value, FILTER_VALIDATE_FLOAT) === false) {
       throw new \UnexpectedValueException("{$value} invalid");
     }
 
@@ -247,7 +247,7 @@ class Box
    */
   public function setTotalBox($value)
   {
-    if (!filter_var($value, FILTER_VALIDATE_FLOAT)) {
+    if (filter_var($value, FILTER_VALIDATE_FLOAT) === false) {
       throw new \UnexpectedValueException("{$value} invalid");
     }
 
