@@ -277,7 +277,7 @@ class Service
     $quote->setPriceInsuranceBox($this->formatMoney($service->ValorValorDeclarado));
     $quote->setHomeDelivery(strval($service->EntregaDomiciliar) === 'S');
     $quote->setDeliverySaturday(strval($service->EntregaSabado) === 'S');
-    $quote->setError(strval($service->Erro));
+    $quote->setError(strval($service->MsgErro));
     
     return $quote;
   }
@@ -286,16 +286,30 @@ class Service
    * @param \ValdeirPsr\Correios\Box $box
    * @return boolean
    */
-  public function validate(Box $box)
+  public function validate(Box $box, $validateMinimum = true)
   {
-    $vLength     = ($box->getLength() >= $this->minimumLength) && ($box->getLength() <= $this->maximumLength);
-    $vWidth      = ($box->getWidth() >= $this->minimumWidth) && ($box->getWidth() <= $this->maximumWidth);
-    $vHeight     = ($box->getHeight() >= $this->minimumHeight) && ($box->getHeight() <= $this->maximumHeight);
+    $vLength     = ($box->getLength() <= $this->maximumLength);
+    $vWidth      = ($box->getWidth() <= $this->maximumWidth);
+    $vHeight     = ($box->getHeight() <= $this->maximumHeight);
     $vSum        = ($box->getLength() + $box->getWidth() + $box->getHeight()) <= $this->maximumTotalDimension;
     $vPriceTotal = ($box->getTotalBox() >= $this->minimumTotalBox) && ($box->getTotalBox() <= $this->maximumTotalBox);
     $vWeight     = ($box->getWeight() <= $this->maximumWeight);
 
-    return $vLength && $vWidth && $vHeight && $vSum && $vPriceTotal && $vWeight;
+    if ($validateMinimum) {
+      $vLength     = ($box->getLength() >= $this->minimumLength) && $vLength;
+      $vWidth      = ($box->getWidth() >= $this->minimumWidth) && $vWidth;
+      $vHeight     = ($box->getHeight() >= $this->minimumHeight) && $vHeight;
+    }
+
+    $vPostcodeFrom = !empty($box->getPostcodeFrom());
+    
+    return $vLength 
+      && $vWidth 
+      && $vHeight 
+      && $vSum 
+      && $vPriceTotal 
+      && $vWeight
+      && $vPostcodeFrom;
   }
 
   private function formatMoney($value)
