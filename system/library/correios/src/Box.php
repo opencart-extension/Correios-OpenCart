@@ -48,7 +48,7 @@ class Box
   private $height;
 
   /** @var bool */
-  private $deliverByHand;
+  private $deliveryByHand;
 
   /** @var float */
   private $totalBox;
