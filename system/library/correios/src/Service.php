@@ -38,7 +38,7 @@ class Service
   protected $maximumTotalDimension = 200;
 
   /** @var float R$ */
-  protected $maximumTotalBox = 10000;
+  protected $maximumTotalBox = 3000;
 
   /**
    * Cria uma instância do objeto
