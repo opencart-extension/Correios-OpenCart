@@ -31,11 +31,9 @@ final class CorreiosTest extends TestCase
         'price'           => 1,
         'total'           => 1,
         'weight'          => 1,
-        'weight_class_id' => 1,
         'length'          => 1,
         'width'           => 1,
-        'height'          => 1,
-        'length_class_id' => 1
+        'height'          => 1
       ]
     ]);
   }
@@ -55,11 +53,9 @@ final class CorreiosTest extends TestCase
     $price, 
     $total, 
     $weight, 
-    $weightClassId, 
     $length, 
     $width, 
-    $height, 
-    $lengthClassId
+    $height
   ): void {
     $this->expectException(UnexpectedValueException::class);
     
@@ -72,11 +68,9 @@ final class CorreiosTest extends TestCase
         'price'           => $price,
         'total'           => $total,
         'weight'          => $weight,
-        'weight_class_id' => $weightClassId,
         'length'          => $length,
         'width'           => $width,
-        'height'          => $height,
-        'length_class_id' => $lengthClassId
+        'height'          => $height
       ]
     ]);
   }
@@ -171,11 +165,9 @@ final class CorreiosTest extends TestCase
         'price'           => 1,
         'total'           => 1,
         'weight'          => 1,
-        'weight_class_id' => 1,
         'length'          => 1,
         'width'           => 1,
-        'height'          => 1,
-        'length_class_id' => 1
+        'height'          => 1
       ],
       [
         'shipping'        => '01001000',
@@ -183,11 +175,9 @@ final class CorreiosTest extends TestCase
         'price'           => 1,
         'total'           => 1,
         'weight'          => 1,
-        'weight_class_id' => 1,
         'length'          => 1,
         'width'           => 1,
-        'height'          => 1,
-        'length_class_id' => 1
+        'height'          => 1
       ],
       [
         'shipping'        => 'AAAAAAA',
@@ -195,11 +185,9 @@ final class CorreiosTest extends TestCase
         'price'           => 1,
         'total'           => 1,
         'weight'          => 1,
-        'weight_class_id' => 1,
         'length'          => 1,
         'width'           => 1,
-        'height'          => 1,
-        'length_class_id' => 1
+        'height'          => 1
       ]
     ];
   }
@@ -263,11 +251,9 @@ final class CorreiosTest extends TestCase
             'price' => '100',
             'total' => '100',
             'weight' => '1',
-            'weight_class_id' => '1',
             'length' => '16',
             'width' => '11',
             'height' => '1',
-            'length_class_id' => '1',
           ]
         ],
         8,
@@ -285,8 +271,6 @@ final class CorreiosTest extends TestCase
             'length' => '30',
             'width' => '30',
             'height' => '30',
-            'length_class_id' => '1',
-            'weight_class_id' => '1',
           ]
         ],
         8,
@@ -304,8 +288,6 @@ final class CorreiosTest extends TestCase
             'length' => '40',
             'width' => '40',
             'height' => '40',
-            'length_class_id' => '1',
-            'weight_class_id' => '1',
           ]
         ],
         8,
@@ -323,8 +305,6 @@ final class CorreiosTest extends TestCase
             'length' => '20',
             'width' => '21',
             'height' => '22',
-            'length_class_id' => '1',
-            'weight_class_id' => '1',
           ],
 
           [
@@ -336,8 +316,6 @@ final class CorreiosTest extends TestCase
             'length' => '16',
             'width' => '11',
             'height' => '10',
-            'length_class_id' => '1',
-            'weight_class_id' => '1',
           ],
 
           [
@@ -349,8 +327,6 @@ final class CorreiosTest extends TestCase
             'length' => '21',
             'width' => '30',
             'height' => '28',
-            'length_class_id' => '1',
-            'weight_class_id' => '1',
           ]
         ],
         14,
@@ -368,8 +344,6 @@ final class CorreiosTest extends TestCase
             'length' => '16',
             'width' => '16',
             'height' => '2',
-            'length_class_id' => '1',
-            'weight_class_id' => '1',
           ],
       
           [
@@ -381,8 +355,6 @@ final class CorreiosTest extends TestCase
             'length' => '16',
             'width' => '16',
             'height' => '16',
-            'length_class_id' => '1',
-            'weight_class_id' => '1',
           ]
         ],
         11,

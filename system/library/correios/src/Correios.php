@@ -217,11 +217,9 @@ class Correios
       'price'           => ['filter' => FILTER_VALIDATE_FLOAT, 'flags' => ''],
       'total'           => ['filter' => FILTER_VALIDATE_FLOAT, 'flags' => ''],
       'weight'          => ['filter' => FILTER_VALIDATE_FLOAT, 'flags' => ''],
-      'weight_class_id' => ['filter' => FILTER_VALIDATE_INT, 'flags' => ''],
       'length'          => ['filter' => FILTER_VALIDATE_FLOAT, 'flags' => ''],
       'width'           => ['filter' => FILTER_VALIDATE_FLOAT, 'flags' => ''],
       'height'          => ['filter' => FILTER_VALIDATE_FLOAT, 'flags' => ''],
-      'length_class_id' => ['filter' => FILTER_VALIDATE_INT, 'flags' => '']
     ];
 
     foreach ($products as $product) {
