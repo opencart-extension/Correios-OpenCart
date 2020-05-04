@@ -40,6 +40,20 @@ class Correios
    */
   private $discount;
 
+   /** 
+   * Tipo de desconto:
+   *  F para Fixo 
+   *  P para Percentagem
+   * @var string
+   */
+  private $discount_type = 'f';
+
+  /**
+   * Prazo adicional
+   * @var int
+   */
+  private $daysAdditional = 0;
+
   /**
    * Serviços do Correios
    */
@@ -95,13 +109,20 @@ class Correios
    * @param float $discount
    * @throws \UnexpectedValueException 
    */
-  public function setDiscount($discount)
+  public function setDiscount($discount, $type = 'f')
   {
-    if (!filter_var($discount, FILTER_VALIDATE_FLOAT)) {
+    $type = strtolower($type);
+
+    if (!is_numeric($discount)) {
       throw new \UnexpectedValueException("Discount {$discount} invalid");
     }
 
+    if ($type !== 'f' && $type !== 'p') {
+      throw new \UnexpectedValueException("Discount Type {$type} invalid");
+    }
+
     $this->discount = floatval($discount);
+    $this->discount_type = $type;
   }
 
   /**
@@ -149,6 +170,14 @@ class Correios
 
     foreach($boxes as $box) {
       $quotes[] = $this->service->getQuote($box);
+    }
+
+    if ($this->daysAdditional > 0) {
+      array_map([$this, 'applyDaysAdditional'], $quotes);
+    }
+
+    if ($this->discount > 0) {
+      array_map([$this, 'applyDiscount'], $quotes);
     }
 
     return $quotes;
@@ -301,5 +330,35 @@ class Correios
     }
 
     return $boxes;
+  }
+
+  /**
+   * Aplica o prazo adicional 
+   *
+   * @param Quote $quote
+   * @return Quote
+   */
+  private function applyDaysAdditional($quote)
+  {
+    $days = $quote->getDays();
+    $quote->setDays($days + $this->daysAdditional);
+
+    return $quote;
+  }
+
+  /**
+   * Aplica os descontos
+   *
+   * @param Quote $quote
+   * @return Quote
+   */
+  private function applyDiscount($quote)
+  {
+    $priceTotal = $quote->getPriceTotal();
+    $discount = ($this->discount_type === 'p') ? ($this->discount / 100) * $priceTotal : $this->discount;
+    
+    $quote->setPriceTotal($priceTotal - $discount);
+    
+    return $quote;
   }
 }

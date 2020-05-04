@@ -78,18 +78,18 @@ final class CorreiosTest extends TestCase
   /**
    * @dataProvider discountInvalidProvider
    */
-  public function testDiscountInvalid($discount)
+  public function testDiscountInvalid($discount, $type)
   {
     $this->expectException(UnexpectedValueException::class);
-    $this->correios->setDiscount($discount);
+    $this->correios->setDiscount($discount, $type);
   }
 
   /**
    * @dataProvider discountValidProvider
    */
-  public function testDiscountValid($discount, $expect)
+  public function testDiscountValid($discount, $type, $expect)
   {
-    $this->correios->setDiscount($discount);
+    $this->correios->setDiscount($discount, $type);
     $this->assertEquals($this->correios->getDiscount(), $expect);
   }
 
@@ -156,6 +156,77 @@ final class CorreiosTest extends TestCase
    ]);
   }
 
+  /**
+   * @param array $products
+   * @param int $day Prazo de entrega
+   * @param float $price Valor total da entrega
+   * 
+   * @dataProvider quotesValidProvider
+   */
+  public function testQuoteWithProductsValidWithDaysAdditional($products, $expectDays)
+  {
+    /** Aumenta o prazo em 10 dias */
+    $expectDays += 10;
+    $daysTotal = 10;
+
+    foreach($this->services as $service) {
+      $correios = new \ValdeirPsr\Correios\Correios($service, [
+        'postcode' => '01001000'
+      ], $products);
+      
+      $correios->setDaysAdditional(10);
+  
+      try {
+        $quotes = $correios->getQuote();
+    
+        /** Captura o maior prazo */
+        $daysTotal = array_reduce($quotes, function($a, $b) {
+          $days = $b->getDays();
+          return $a > $days ? $a : $days;
+        }, $daysTotal);
+      } catch (InvalidArgumentException $e) {
+        /** Box inválid */
+        continue;
+      }
+    }
+
+    $this->assertEquals($expectDays, $daysTotal);
+  }
+
+  /**
+   * @param array $products
+   * @param int $day Prazo de entrega
+   * @param float $price Valor total da entrega
+   * 
+   * @dataProvider quotesValidDiscountProvider
+   */
+  public function testQuoteWithProductsValidWithDiscount($products, $discount, $discountType, $expectPriceTotal)
+  {
+    $priceTotal = 0;
+
+    foreach($this->services as $service) {
+      $correios = new \ValdeirPsr\Correios\Correios($service, [
+        'postcode' => '01001000'
+      ], $products);
+      
+      $correios->setDiscount($discount, $discountType);
+  
+      try {
+        $quotes = $correios->getQuote();
+    
+        /** Soma todos os valores */
+        $priceTotal += array_reduce($quotes, function($a, $b) {
+          return $a += $b->getPriceTotal();
+        }, 0);
+      } catch (InvalidArgumentException $e) {
+        /** Box inválid */
+        continue;
+      }
+    }
+
+    $this->assertEquals($expectPriceTotal, $priceTotal);
+  }
+
   public function productsInvalidProvider()
   {
     return [
@@ -195,22 +266,28 @@ final class CorreiosTest extends TestCase
   public function discountInvalidProvider()
   {
     return [
-      ['AAA'],
-      ['0123,'],
-      ['12,15'],
-      ['12A15']
+      ['AAA', 'f'],
+      ['0123,', 'f'],
+      ['12,15', 'p'],
+      ['12A15', 'p'],
+
+      [1, true],
+      [10, false],
+      [50, 'A'],
+      [100, null],
     ];
   }
 
   public function discountValidProvider()
   {
     return [
-      [100, 100.00],
-      [100.1, 100.10],
-      [100.19, 100.19],
-      ['0159', 159.00],
-      ['10.15', 10.15],
-      [PHP_INT_MAX, number_format(PHP_INT_MAX, 2, '.', '')]
+      [0, 'f', 0],
+      [100, 'f', 100.00],
+      [100.1, 'F', 100.10],
+      [100.19, "\x46", 100.19],
+      ['0159', 'p', 159.00],
+      ['10.15', 'P', 10.15],
+      [PHP_INT_MAX, "\x70", number_format(PHP_INT_MAX, 2, '.', '')]
     ];
   }
 
@@ -359,6 +436,68 @@ final class CorreiosTest extends TestCase
         ],
         11,
         2528.97 //Ignore o serviço PAC, pois há produto que excete os limites mínimos
+      ]
+    ];
+  }
+
+  /**
+   * Valores cotados no dia 04/05/2020
+   */
+  public function quotesValidDiscountProvider()
+  {
+    return [
+      [
+        [
+          [
+            'shipping' => '23078001',
+            'quantity' => '2',
+            'price' => '500',
+            'total' => '1000',
+            'weight' => '1',
+            'length' => '40',
+            'width' => '40',
+            'height' => '40',
+          ]
+        ],
+        25,
+        'p',
+        296.82
+      ],
+
+      [
+        [
+          [
+            'shipping' => '58111232',
+            'quantity' => '1',
+            'price' => '2500',
+            'total' => '2500',
+            'weight' => '5',
+            'length' => '21',
+            'width' => '30',
+            'height' => '28',
+          ]
+        ],
+        25,
+        'f',
+        311.58
+      ],
+
+      [
+        [      
+          [
+            'shipping' => '58111232',
+            'quantity' => '1',
+            'price' => '3500',
+            'total' => '3500',
+            'weight' => '5',
+            'length' => '16',
+            'width' => '16',
+            'height' => '16',
+          ]
+        ],
+        99,
+        'p',
+        2.65
       ]
     ];
   }
