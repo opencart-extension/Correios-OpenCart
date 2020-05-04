@@ -17,7 +17,7 @@ final class CorreiosTest extends TestCase
       new \ValdeirPsr\Correios\Service('4510', 'PAC'),
     ];
 
-    $this->correios = new \ValdeirPsr\Correios\Correios($this->services, [
+    $this->correios = new \ValdeirPsr\Correios\Correios($this->services[0], [
       'postcode' => $this->postcodeValid
     ], [
       [
@@ -58,7 +58,7 @@ final class CorreiosTest extends TestCase
   ): void {
     $this->expectException(UnexpectedValueException::class);
     
-    new \ValdeirPsr\Correios\Correios($this->services, [
+    new \ValdeirPsr\Correios\Correios($this->services[0], [
       'postcode' => $this->postcodeValid
     ], [
       [
@@ -122,22 +122,26 @@ final class CorreiosTest extends TestCase
    */
   public function testQuoteWithProductsValid($products, $expectDays, $expectPriceTotal)
   {
-    $correios = new \ValdeirPsr\Correios\Correios($this->services, [
-      'postcode' => '01001000'
-    ], $products);
+    $priceTotal = $daysTotal = 0;
 
-    $quotes = $correios->getQuote();
-
-    /** Soma todos os valores */
-    $priceTotal = array_reduce($quotes, function($a, $b) {
-      return $a += $b->getPriceTotal();
-    }, 0);
-
-    /** Captura o maior prazo */
-    $daysTotal = array_reduce($quotes, function($a, $b) {
-      $days = $b->getDays();
-      return $a > $days ? $a : $days;
-    }, 0);
+    foreach($this->services as $service) {
+      $correios = new \ValdeirPsr\Correios\Correios($service, [
+        'postcode' => '01001000'
+      ], $products);
+  
+      $quotes = $correios->getQuote();
+  
+      /** Soma todos os valores */
+      $priceTotal += array_reduce($quotes, function($a, $b) {
+        return $a += $b->getPriceTotal();
+      }, 0);
+  
+      /** Captura o maior prazo */
+      $daysTotal = array_reduce($quotes, function($a, $b) {
+        $days = $b->getDays();
+        return $a > $days ? $a : $days;
+      }, $daysTotal);
+    }
 
     /** Compara os valores */
     $vPrice = $expectPriceTotal === $priceTotal;
