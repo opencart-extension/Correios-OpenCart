@@ -10,6 +10,11 @@ final class ServiceTest extends TestCase
   protected function setUp(): void
   {
     $this->service = new \ValdeirPsr\Correios\Service('04162', 'Sedex');
+    $this->service->setMaximumLength(100);
+    $this->service->setMaximumHeight(100);
+    $this->service->setMaximumWidth(100);
+    $this->service->setMaximumTotalDimension(200);
+    $this->service->setMaximumTotalBox(10000);
   }
 
   public function testClassService()
@@ -91,6 +96,7 @@ final class ServiceTest extends TestCase
   {
     $service = new \ValdeirPsr\Correios\Service($serviceConfig['code'], $serviceConfig['name']);
     $service->setMaximumWeight(60);
+    $service->setMaximumTotalBox((int)$serviceConfig['code'] == 4014 ? 10000 : 3000);
 
     $box = new \ValdeirPsr\Correios\Box();
     $box->setPostcodeFrom($serviceConfig['from']);

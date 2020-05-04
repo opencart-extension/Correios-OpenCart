@@ -12,9 +12,14 @@ final class CorreiosTest extends TestCase
 
   protected function setUp() : void
   {
+    $sedex = new \ValdeirPsr\Correios\Service('4014', 'Sedex');
+    $sedex->setMaximumTotalBox(10000);
+
+    $pac = new \ValdeirPsr\Correios\Service('4510', 'PAC');
+
     $this->services = [
-      new \ValdeirPsr\Correios\Service('4014', 'Sedex'),
-      new \ValdeirPsr\Correios\Service('4510', 'PAC'),
+      $sedex,
+      $pac,
     ];
 
     $this->correios = new \ValdeirPsr\Correios\Correios($this->services[0], [
@@ -129,25 +134,32 @@ final class CorreiosTest extends TestCase
         'postcode' => '01001000'
       ], $products);
   
-      $quotes = $correios->getQuote();
-  
-      /** Soma todos os valores */
-      $priceTotal += array_reduce($quotes, function($a, $b) {
-        return $a += $b->getPriceTotal();
-      }, 0);
-  
-      /** Captura o maior prazo */
-      $daysTotal = array_reduce($quotes, function($a, $b) {
-        $days = $b->getDays();
-        return $a > $days ? $a : $days;
-      }, $daysTotal);
+      try {
+        $quotes = $correios->getQuote();
+    
+        /** Soma todos os valores */
+        $priceTotal += array_reduce($quotes, function($a, $b) {
+          return $a += $b->getPriceTotal();
+        }, 0);
+    
+        /** Captura o maior prazo */
+        $daysTotal = array_reduce($quotes, function($a, $b) {
+          $days = $b->getDays();
+          return $a > $days ? $a : $days;
+        }, $daysTotal);
+      } catch (InvalidArgumentException $e) {
+        /** Box inválid */
+        continue;
+      }
     }
 
-    /** Compara os valores */
-    $vPrice = $expectPriceTotal === $priceTotal;
-    $vExpectDays = $expectDays === $daysTotal;
-
-    $this->assertTrue($vPrice && $vExpectDays);
+   $this->assertEquals([
+     $expectPriceTotal,
+     $expectDays
+   ], [
+     $priceTotal,
+     $daysTotal
+   ]);
   }
 
   public function productsInvalidProvider()
@@ -343,6 +355,38 @@ final class CorreiosTest extends TestCase
         ],
         14,
         3071.88 //2665.12 + 45.18 + 361.58
+      ],
+
+      [
+        [
+          [
+            'shipping' => '58111232',
+            'quantity' => '10',
+            'price' => '500',
+            'total' => '500',
+            'weight' => '5',
+            'length' => '16',
+            'width' => '16',
+            'height' => '2',
+            'length_class_id' => '1',
+            'weight_class_id' => '1',
+          ],
+      
+          [
+            'shipping' => '58111232',
+            'quantity' => '1',
+            'price' => '3500',
+            'total' => '3500',
+            'weight' => '5',
+            'length' => '16',
+            'width' => '16',
+            'height' => '16',
+            'length_class_id' => '1',
+            'weight_class_id' => '1',
+          ]
+        ],
+        11,
+        2528.97 //Ignore o serviço PAC, pois há produto que excete os limites mínimos
       ]
     ];
   }
