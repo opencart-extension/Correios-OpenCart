@@ -57,7 +57,7 @@ final class CorreiosTest extends TestCase
     $width, 
     $height
   ): void {
-    $this->expectException(UnexpectedValueException::class);
+    $this->expectException(InvalidArgumentException::class);
     
     new \ValdeirPsr\Correios\Correios($this->services[0], [
       'postcode' => $this->postcodeValid
@@ -80,7 +80,7 @@ final class CorreiosTest extends TestCase
    */
   public function testDiscountInvalid($discount, $type)
   {
-    $this->expectException(UnexpectedValueException::class);
+    $this->expectException(InvalidArgumentException::class);
     $this->correios->setDiscount($discount, $type);
   }
 
@@ -98,7 +98,7 @@ final class CorreiosTest extends TestCase
    */
   public function testDaysAdditionalInvalid($days)
   {
-    $this->expectException(UnexpectedValueException::class);
+    $this->expectException(InvalidArgumentException::class);
     $this->correios->setDaysAdditional($days);
   }
   
@@ -191,6 +191,68 @@ final class CorreiosTest extends TestCase
     }
 
     $this->assertEquals($expectDays, $daysTotal);
+  }
+
+  /**
+   * @param array $products
+   * @param int $day Prazo de entrega
+   * @param float $price Valor total da entrega
+   * 
+   * @dataProvider quotesAllValidProvider
+   */
+  public function testQuoteWithProductsValidAndDiscountAndServicesInvalid($products)
+  {
+    $this->expectException(\UnexpectedValueException::class);
+
+    $this->services = [new \ValdeirPsr\Correios\Service('invalid', 'Inválido')];
+
+    $priceTotal = 0;
+
+    foreach($this->services as $service) {
+      $correios = new \ValdeirPsr\Correios\Correios($service, [
+        'postcode' => '01001000'
+      ], $products);
+      
+      $correios->setDiscount(10);
+  
+      try {
+        $correios->getQuote();
+      } catch (InvalidArgumentException $e) {
+        /** Box inválid */
+        continue;
+      }
+    }
+  }
+
+  /**
+   * @param array $products
+   * @param int $day Prazo de entrega
+   * @param float $price Valor total da entrega
+   * 
+   * @dataProvider quotesAllValidProvider
+   */
+  public function testQuoteWithProductsValidAndDaysAdditionalAndServicesInvalid($products)
+  {
+    $this->expectException(\UnexpectedValueException::class);
+
+    $this->services = [new \ValdeirPsr\Correios\Service('invalid', 'Inválido')];
+
+    $priceTotal = 0;
+
+    foreach($this->services as $service) {
+      $correios = new \ValdeirPsr\Correios\Correios($service, [
+        'postcode' => '01001000'
+      ], $products);
+      
+      $correios->setDaysAdditional(10);
+  
+      try {
+        $correios->getQuote();
+      } catch (InvalidArgumentException $e) {
+        /** Box inválid */
+        continue;
+      }
+    }
   }
 
   /**
@@ -436,6 +498,44 @@ final class CorreiosTest extends TestCase
         ],
         11,
         2528.97 //Ignore o serviço PAC, pois há produto que excete os limites mínimos
+      ]
+    ];
+  }
+
+  /**
+   * Valores cotados no dia 02/05/2020
+   */
+  public function quotesAllValidProvider()
+  {
+    return [
+      [
+        [
+          [
+            'shipping' => '23078001',
+            'quantity' => '20',
+            'price' => '100',
+            'total' => '100',
+            'weight' => '1',
+            'length' => '16',
+            'width' => '11',
+            'height' => '1',
+          ]
+        ]
+      ],
+
+      [
+        [
+          [
+            'shipping' => '23078001',
+            'quantity' => '1',
+            'price' => '1000',
+            'total' => '1000',
+            'weight' => '2',
+            'length' => '30',
+            'width' => '30',
+            'height' => '30',
+          ]
+        ]
       ]
     ];
   }

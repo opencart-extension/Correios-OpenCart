@@ -107,18 +107,18 @@ class Correios
   /**
    * Informa o valor de desconto do preço total do envio
    * @param float $discount
-   * @throws \UnexpectedValueException 
+   * @throws \InvalidArgumentException 
    */
   public function setDiscount($discount, $type = 'f')
   {
     $type = strtolower($type);
 
     if (!is_numeric($discount)) {
-      throw new \UnexpectedValueException("Discount {$discount} invalid");
+      throw new \InvalidArgumentException("Discount {$discount} invalid");
     }
 
     if ($type !== 'f' && $type !== 'p') {
-      throw new \UnexpectedValueException("Discount Type {$type} invalid");
+      throw new \InvalidArgumentException("Discount Type {$type} invalid");
     }
 
     $this->discount = floatval($discount);
@@ -137,12 +137,12 @@ class Correios
   /**
    * Informa um prazo adicional
    * @param int $days
-   * @throws \UnexpectedValueException
+   * @throws \InvalidArgumentException
    */
   public function setDaysAdditional($days)
   {
     if (!filter_var($days, FILTER_VALIDATE_INT)) {
-      throw new \UnexpectedValueException("Days Additional {$days} invalid");
+      throw new \InvalidArgumentException("Days Additional {$days} invalid");
     }
 
     $this->daysAdditional = intval($days);
@@ -222,7 +222,7 @@ class Correios
    * 
    * @param array $products
    * @throws InvalidArgumentException Quando o array não encontrar as keys obrigatórias
-   * @throws UnexpectedValueException Quando o valor informado for inválido
+   *                                  Quando o valor informado for inválido
    */
   private function validateProducts($products)
   {
@@ -258,7 +258,7 @@ class Correios
         }
   
         if (!filter_var($product[$key], $value['filter'], $value['flags'])) {
-          throw new \UnexpectedValueException("{$key} = {$product[$key]} is invalid");
+          throw new \InvalidArgumentException("{$key} = {$product[$key]} is invalid");
         }
       }
     }
@@ -337,9 +337,12 @@ class Correios
    *
    * @param Quote $quote
    * @return Quote
+   * @throws UnexpectedValueException Quando $quote houver erro
    */
   private function applyDaysAdditional($quote)
   {
+    if (!!$quote->getError()) throw new \UnexpectedValueException($quote->getError());
+
     $days = $quote->getDays();
     $quote->setDays($days + $this->daysAdditional);
 
@@ -351,9 +354,12 @@ class Correios
    *
    * @param Quote $quote
    * @return Quote
+   * @throws UnexpectedValueException Quando $quote houver erro
    */
   private function applyDiscount($quote)
   {
+    if (!!$quote->getError()) throw new \UnexpectedValueException($quote->getError());
+
     $priceTotal = $quote->getPriceTotal();
     $discount = ($this->discount_type === 'p') ? ($this->discount / 100) * $priceTotal : $this->discount;
     
