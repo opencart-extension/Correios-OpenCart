@@ -20,7 +20,10 @@ class Service
   protected $minimumHeight = 2;
 
   /** @var float R$ */
-  protected $minimumTotalBox = 19.5;
+  protected $minimumTotalBox = 20.5;
+  
+  /** @var float KG */
+  protected $minimumWeight = 0.1;
   
   /** @var float cm */
   protected $maximumLength = 100;
@@ -196,6 +199,14 @@ class Service
   /**
    * @param float $value
    */
+  public function getMinimumWeight()
+  {
+    return $this->minimumWeight;
+  }
+
+  /**
+   * @param float $value
+   */
   public function setMaximumTotalDimension($value)
   {
     $this->maximumTotalDimension = floatval($value);
@@ -292,10 +303,11 @@ class Service
     $vWidth      = ($box->getWidth() <= $this->maximumWidth);
     $vHeight     = ($box->getHeight() <= $this->maximumHeight);
     $vSum        = ($box->getLength() + $box->getWidth() + $box->getHeight()) <= $this->maximumTotalDimension;
-    $vPriceTotal = ($box->getTotalBox() >= $this->minimumTotalBox) && ($box->getTotalBox() <= $this->maximumTotalBox);
+    $vPriceTotal = ($box->getTotalBox() <= $this->maximumTotalBox);
     $vWeight     = ($box->getWeight() <= $this->maximumWeight);
 
     if ($validateMinimum) {
+      $vPriceTotal = ($box->getTotalBox() >= $this->minimumTotalBox) && $vPriceTotal;
       $vLength     = ($box->getLength() >= $this->minimumLength) && $vLength;
       $vWidth      = ($box->getWidth() >= $this->minimumWidth) && $vWidth;
       $vHeight     = ($box->getHeight() >= $this->minimumHeight) && $vHeight;

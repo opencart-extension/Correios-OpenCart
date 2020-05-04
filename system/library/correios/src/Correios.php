@@ -166,6 +166,9 @@ class Correios
   public function getQuote()
   {
     $boxes = $this->buildBoxes();
+
+    array_map([$this, 'ajustMinimumBox'], $boxes);
+
     $quotes = [];
 
     foreach($boxes as $box) {
@@ -264,6 +267,37 @@ class Correios
     }
 
     return true;
+  }
+
+  /**
+   * Ajusta as dimensões para os valores mínimos
+   *
+   * @param Box $box
+   * @return Box
+   */
+  private function ajustMinimumBox($box)
+  {
+    if ($box->getWeight() < $this->service->getMinimumWeight()) {
+      $box->setWeight($this->service->getMinimumWeight());
+    }
+
+    if ($box->getLength() < $this->service->getMinimumLength()) {
+      $box->setLength($this->service->getMinimumLength());
+    }
+
+    if ($box->getWidth() < $this->service->getMinimumWidth()) {
+      $box->setWidth($this->service->getMinimumWidth());
+    }
+
+    if ($box->getHeight() < $this->service->getMinimumHeight()) {
+      $box->setHeight($this->service->getMinimumHeight());
+    }
+
+    if ($box->getTotalBox() < $this->service->getMinimumTotalBox()) {
+      $box->setTotalBox($this->service->getMinimumTotalBox());
+    }
+
+    return $box;
   }
 
   /**

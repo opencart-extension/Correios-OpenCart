@@ -497,7 +497,75 @@ final class CorreiosTest extends TestCase
           ]
         ],
         11,
-        2528.97 //Ignore o serviço PAC, pois há produto que excete os limites mínimos
+        2528.97, //Ignore o serviço PAC, pois há produto que excete os limites mínimos,
+
+        [
+          [
+            [
+              'shipping' => '96230000',
+              'quantity' => '1',
+              'price' => '500',
+              'total' => '500',
+              'weight' => '5',
+              'length' => '14', //Valor inválido. O código deve alterar para o mínimo: 15
+              'width' => '11',
+              'height' => '2',
+            ]
+          ],
+          11,
+          168.8
+        ],
+
+        [
+          [
+            [
+              'shipping' => '96230000',
+              'quantity' => '1',
+              'price' => '20.5',
+              'total' => '20.5',
+              'weight' => '5',
+              'length' => '15',
+              'width' => '10', //Valor inválido. O código deve alterar para o mínimo: 11
+              'height' => '2',
+            ]
+          ],
+          11,
+          168.8
+        ],
+
+        [
+          [
+            [
+              'shipping' => '96230000',
+              'quantity' => '1',
+              'price' => '20.5',
+              'total' => '20.5',
+              'weight' => '5',
+              'length' => '15',
+              'width' => '11',
+              'height' => '1', //Valor inválido. O código deve alterar para o mínimo: 2
+            ]
+          ],
+          11,
+          168.8
+        ],
+
+        [
+          [
+            [
+              'shipping' => '96230000',
+              'quantity' => '1',
+              'price' => '1', //Valor inválido. O código deve alterar para o mínimo: 20.5
+              'total' => '1', //Valor inválido. O código deve alterar para o mínimo: 20.5
+              'weight' => '5',
+              'length' => '15',
+              'width' => '11',
+              'height' => '1',
+            ]
+          ],
+          11,
+          187.98
+        ]
       ]
     ];
   }
