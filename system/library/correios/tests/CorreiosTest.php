@@ -278,7 +278,7 @@ final class CorreiosTest extends TestCase
     
         /** Soma todos os valores */
         $priceTotal += array_reduce($quotes, function($a, $b) {
-          return $a += $b->getPriceTotal();
+          return floatval(number_format($a += $b->getPriceTotal(), 2, ".", ""));
         }, 0);
       } catch (InvalidArgumentException $e) {
         /** Box inválid */
@@ -496,7 +496,7 @@ final class CorreiosTest extends TestCase
             'height' => '16',
           ]
         ],
-        11,
+        8,
         2528.97, //Ignore o serviço PAC, pois há produto que excete os limites mínimos,
 
         [
@@ -564,7 +564,7 @@ final class CorreiosTest extends TestCase
             ]
           ],
           11,
-          187.98
+          168.8
         ]
       ]
     ];

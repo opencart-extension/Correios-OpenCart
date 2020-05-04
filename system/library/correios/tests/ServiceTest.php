@@ -186,13 +186,16 @@ final class ServiceTest extends TestCase
 
   /**
    * Retorna os valores esperado para os testes.
-   * Valores obtidos em 27/04/2020 às 23:53
+   * Valores obtidos em 04/05/2020 às 19:28
    *
    * @return void
    */
   public function validQuotesProvider()
   {
     return [
+      /**
+       * http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx/CalcPrecoPrazo?nCdEmpresa=&sDsSenha=&nCdServico=40010&sCepOrigem=96230000&sCepDestino=69358000&nVlPeso=0.3&nCdFormato=1&nVlAltura=2&nVlLargura=11&nVlComprimento=16&nVlDiametro=0&sCdMaoPropria=N&nVlValorDeclarado=100&sCdAvisoRecebimento=S
+       */
       [
         [
           'code' => '40010', 
@@ -208,7 +211,7 @@ final class ServiceTest extends TestCase
           'hand' => false
         ], [
           'serviceCode' => '40010',
-          'days' => 14,
+          'days' => 11,
           'priceTotal' => 160.54,
           'priceBase' => 152.6,
           'priceDeliveryByHand' => 0.0,
@@ -220,6 +223,7 @@ final class ServiceTest extends TestCase
         ]
       ],
 
+      /** http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx/CalcPrecoPrazo?nCdEmpresa=&sDsSenha=&nCdServico=40010&sCepOrigem=96230000&sCepDestino=23078001&nVlPeso=1&nCdFormato=1&nVlAltura=2&nVlLargura=11&nVlComprimento=16&nVlDiametro=0&sCdMaoPropria=S&nVlValorDeclarado=100&sCdAvisoRecebimento=S */
       [
         [
           'code' => '40010', 
@@ -235,7 +239,7 @@ final class ServiceTest extends TestCase
           'hand' => true
         ], [
           'serviceCode' => '40010',
-          'days' => 7,
+          'days' => 4,
           'priceTotal' => 90.44,
           'priceBase' => 75.0,
           'priceDeliveryByHand' => 7.5,
@@ -246,7 +250,8 @@ final class ServiceTest extends TestCase
           'error' => false
         ]
       ],
-
+      
+      /** http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx/CalcPrecoPrazo?nCdEmpresa=&sDsSenha=&nCdServico=40010&sCepOrigem=23078001&sCepDestino=69358000&nVlPeso=1&nCdFormato=1&nVlAltura=2&nVlLargura=11&nVlComprimento=16&nVlDiametro=0&sCdMaoPropria=S&nVlValorDeclarado=100&sCdAvisoRecebimento=S */
       [
         [
           'code' => '40010', 
@@ -262,7 +267,7 @@ final class ServiceTest extends TestCase
           'hand' => true
         ], [
           'serviceCode' => '40010',
-          'days' => 12,
+          'days' => 9,
           'priceTotal' => 176.74,
           'priceBase' => 161.3,
           'priceDeliveryByHand' => 7.5,
@@ -273,7 +278,8 @@ final class ServiceTest extends TestCase
           'error' => false
         ]
       ],
-
+      
+      /** http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx/CalcPrecoPrazo?nCdEmpresa=&sDsSenha=&nCdServico=4014&sCepOrigem=96230000&sCepDestino=69358000&nVlPeso=50&nCdFormato=1&nVlAltura=67&nVlLargura=66&nVlComprimento=67&nVlDiametro=0&sCdMaoPropria=S&nVlValorDeclarado=10000&sCdAvisoRecebimento=S */
       [
         [
           'code' => '4014', 
@@ -289,7 +295,7 @@ final class ServiceTest extends TestCase
           'hand' => true
         ], [
           'serviceCode' => '4014',
-          'days' => 14,
+          'days' => 11,
           'priceTotal' => 2960.94,
           'priceBase' => 2747.5,
           'priceDeliveryByHand' => 7.5,
